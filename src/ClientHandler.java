@@ -3,7 +3,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class ClientHandler implements Runnable{
-    public static ArrayList<ClientHandler> clientHandlers = new ArrayList<>; //va stoca toti clientii. Cand un client va trimit un mesaj, vom face loop pe aceasta lista si vom trimite acelasi mesaj la fiecare din clientii conectati. Este statica pentru ca vrem sa apartina clasei, nu fiecarui obiect.
+    public static ArrayList<ClientHandler> clientHandlers = new ArrayList<>(); //va stoca toti clientii. Cand un client va trimit un mesaj, vom face loop pe aceasta lista si vom trimite acelasi mesaj la fiecare din clientii conectati. Este statica pentru ca vrem sa apartina clasei, nu fiecarui obiect.
     private Socket socket; //va fi responsabila pentru stabilirea conexiunii dintre client si server
     private BufferedReader bufferedReader; //va fi folosita pentru a citi datele trimise de la client
     private BufferedWriter bufferedWriter; //va fi folosita pentru a trimite datele catre client
@@ -19,7 +19,7 @@ public class ClientHandler implements Runnable{
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.clientUserName = bufferedReader.readLine(); //programul se va opri aici si va astepta sa introducem numele noului client.
             clientHandlers.add(this); //dupa ce s-a scris numele utilizatorului, adaugam la ArrayList obiectul curent (this)
-            broadcastMessage("SERVER: " + clientUserName + " has entered the chat!")
+            broadcastMessage("SERVER: " + clientUserName + " has entered the chat!");
         }catch(IOException e){
             closeEverything(socket, bufferedReader, bufferedWriter);
         }
