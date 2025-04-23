@@ -35,8 +35,46 @@ public class ClientHandler implements Runnable{
                 broadcastMessage(messageFromClient); //vom distribui mesajul catre toti clienti din ArrayList
             }catch(IOException e){
                 closeEverything(socket, bufferedReader, bufferedWriter);
-                break;
+                break; //daca vom primi exceptie va trebui sa iesim din while
             }
+        }
+    }
+
+    public void broadcastMessage(String messageToSend){
+        for(ClientHandler clientHandler : clientHandlers){
+            try{
+                if(!clientHandler.clientUserName.equals(clientUserName)){
+                    clientHandler.bufferedWriter.write(messageToSend);
+                    clientHandler.bufferedWriter.newLine();
+                    clientHandler.bufferedWriter.flush();
+                }
+            }catch(IOException e){
+                closeEverything(socket, bufferedReader, bufferedWriter);
+            }
+        }
+    }
+
+    //aceasta metoda va semnala cand un utilizator a parasit chat-ul
+    public void removeClientHandler(){
+        clientHandlers.remove(this);
+        broadcastMessage("SERVER: " + clientUserName + " has left the chat!");
+    }
+
+    public void closeEverything(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter){
+        removeClientHandler();
+        try{
+            //nu este nevoie sa inchidem si input/outputstream. BufferedReader/Writer le va inchide automat in cascada
+            if(bufferedReader != null){
+                bufferedReader.close();
+            }
+            if(bufferedWriter != null){
+                bufferedWriter.close();
+            }
+            if(socket != null){ //aceeasi regula se aplica si la socket. Nu trebuie sa mai inchidem socket input/outputstream
+                socket.close();
+            }
+        }catch(IOException e){
+            e.printStackTrace();
         }
     }
 }
